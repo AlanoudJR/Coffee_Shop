@@ -4,7 +4,7 @@ from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
 
-
+#Update the variables
 AUTH0_DOMAIN = 'test-alanoud.us.auth0.com'
 API_AUDIENCE = 'drinks'
 ALGORITHMS = ['RS256']
@@ -24,6 +24,11 @@ class AuthError(Exception):
 ## Auth Header
 
 '''
+All credits go to https://auth0.com/docs/quickstart/backend/python/01-authorization Documentation
+With additional comments from my side for better understanding.
+'''
+
+'''
 @TODO implement get_token_auth_header() method
     it should attempt to get the header from the request
         it should raise an AuthError if no header is present
@@ -35,26 +40,30 @@ class AuthError(Exception):
 def get_token_auth_header():
     """Obtains the Access Token from the Authorization Header
     """
+    #Get the access token from the auth header
     auth = request.headers.get('Authorization', None)
+
+    #Raise an error if auth does not have auth header
     if not auth:
         raise AuthError({
             'code': 'authorization_header_missing',
             'description': 'Authorization header is expected.'
         }, 401)
-
+    # Split the auth in two sections, bearer -auth type- and the access token value itself
+    # raise an auth error if its not bearer token
     parts = auth.split()
     if parts[0].lower() != 'bearer':
         raise AuthError({
             'code': 'invalid_header',
             'description': 'Authorization header must start with "Bearer".'
         }, 401)
-
+    #Rais an error if the token value is not found (length = 1)
     elif len(parts) == 1:
         raise AuthError({
             'code': 'invalid_header',
             'description': 'Token not found.'
         }, 401)
-
+    #Raise an error if the token value is a different type "should be bearer only"
     elif len(parts) > 2:
         raise AuthError({
             'code': 'invalid_header',
@@ -62,6 +71,7 @@ def get_token_auth_header():
         }, 401)
 
     token = parts[1]
+    #Return token value only (without the type)
     return token
 
 '''
